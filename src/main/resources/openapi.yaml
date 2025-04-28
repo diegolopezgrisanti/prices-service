@@ -1,0 +1,110 @@
+openapi: 3.0.0
+info:
+  title: Price Service API
+  description: API for retrieving and managing product prices based on product ID, brand, and date/time criteria.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+paths:
+  /prices:
+    get:
+      tags:
+        - prices
+      operationId: getPrices
+      summary: Get the price for a product
+      description: Retrieve the price of a specific product for a given brand and timestamp.
+      parameters:
+        - name: productId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 35455
+          description: Product ID to fetch the price for.
+        - name: brandId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+          description: Brand ID associated with the product.
+        - name: dateTime
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "2020-06-14T10:00:00"
+          description: Date and time for which to fetch the price.
+      responses:
+        '200':
+          description: Price retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponseDTO'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDTO'
+        '404':
+          description: Price not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDTO'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDTO'
+components:
+  schemas:
+    PriceResponseDTO:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+          description: Product ID
+          example: 35455
+        brandId:
+          type: integer
+          format: int64
+          description: Brand ID
+          example: 1
+        priceList:
+          type: integer
+          description: Price list identifier
+          example: 1
+        startDate:
+          type: string
+          format: date-time
+          description: Start date and time of the price
+          example: "2020-06-14T00:00:00"
+        endDate:
+          type: string
+          format: date-time
+          description: End date and time of the price
+          example: "2020-12-31T23:59:59"
+        finalPrice:
+          type: number
+          format: double
+          description: Final price of the product
+          example: 35.50
+        currency:
+          type: string
+          description: Price currency
+          example: "EUR"
+    ErrorResponseDTO:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message describing the issue
+          example: "Product not found"
